@@ -29,7 +29,6 @@ public class Horario extends Thread {
 			synchronized(t) {
 			t.wait();
 			}
-		// tá diferente na foto que te mandei
 		}catch (InterruptedException e) { 
 			System.out.println(e);
 		}

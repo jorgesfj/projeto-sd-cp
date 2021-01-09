@@ -1,5 +1,4 @@
 package com.ufal.br.servidor;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,21 +26,17 @@ public class Servidor {
 		socket.close();
 	}
 	
-	private void tratarConexao(Socket socket) throws IOException, ClassNotFoundException {
+	private void tratarConexao(Socket socket, Horario h1, Horario h2, Horario h3) throws IOException, ClassNotFoundException {
 		try {
 			ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-			ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-			
-			Horario h1 = new Horario();
-			Horario h2 = new Horario();
-			Horario h3 = new Horario();
-			
-			while(true) {
+			ObjectInputStream input = new ObjectInputStream(socket.getInputStream());			
+
 				Consulta consulta = (Consulta) input.readObject();
 				Threadex t = new Threadex(h1,h2,h3, consulta);
-				t.start();			
-				}
-			
+				t.start();							
+			input.close();
+			output.close();
+				
 		}catch(IOException e) {
 			System.out.println("Problema no tratamento da conexão");
 			System.out.println("Erro: " + e.getMessage());
@@ -55,10 +50,17 @@ public class Servidor {
 			Servidor servidor = new Servidor();
 			System.out.println("Aguardando Conexão");
 			servidor.criarServerSocket(5555);
-			Socket socket = servidor.esperaConexao();
-			System.out.println("Cliente Conectado");
-			servidor.tratarConexao(socket);
-			System.out.println("Cliente Finalizado");
+			
+			Horario h1 = new Horario();
+			Horario h2 = new Horario();
+			Horario h3 = new Horario();			
+			
+			while(true) {				
+				Socket socket = servidor.esperaConexao();			
+				//System.out.println("Cliente Conectado");
+				servidor.tratarConexao(socket,h1,h2,h3);
+				
+			}
 		} catch (IOException e) {
 			System.out.println("Erro no servidor: " + e.getMessage());
 		}catch (ClassNotFoundException e) {
